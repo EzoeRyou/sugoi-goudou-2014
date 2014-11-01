@@ -1,0 +1,1156 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>C++の提案の読み方</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+
+
+
+<section>
+<h1>C++の提案</h1>
+<h1>の</h1>
+<h1>読み方</h1>
+</section>
+
+<section>
+<h2>自己紹介</h2>
+
+<p>
+江添亮
+</p>
+
+<p>
+株式会社ドワンゴ
+</p>
+
+<p>
+C++標準化委員会　エキスパートメンバー
+</p>
+</section>
+
+<section>
+<h2>C++標準化委員会</h2>
+
+<p>
+ISOの下位組織
+</p>
+
+<p>
+国家単位で活動組織が存在する
+</p>
+
+<p>
+日本の場合、ITSCJ
+</p>
+</section>
+
+<section>
+<h2>文書</h2>
+
+<p>
+ISOの規程に基づき
+</p>
+<p>
+C++標準化委員会の文書は
+</p>
+
+<p>
+文書番号を付与して公開される
+</p>
+</section>
+
+<section>
+<h2>
+公開場所
+</h2>
+
+<p>
+<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/">http://www.open-std.org/jtc1/sc22/wg21/docs/papers/</a>
+</p>
+</section>
+
+<section>
+<h2>
+文書の内容
+</h2>
+
+<p>
+国際会議の案内、予定表、議事録
+</p>
+
+<p>
+ドラフト文面、既知の問題集
+</p>
+
+<p>
+問題点の考察
+</p>
+
+<p>
+新機能の提案
+</p>
+
+<p>
+新技術の紹介
+</p>
+</section>
+
+<section>
+<h2>具体的には？</h2>
+
+<p>
+注意
+</p>
+
+<p>
+提案段階の文法や機能はまだ大幅に変わる可能性がある
+</p>
+
+<p>
+そもそも採用されるかどうか分からない
+</p>
+
+<p>
+実用できるのは10年は先の話
+</p>
+</section>
+
+<section>
+<h2>
+デフォルトの比較演算子
+</h2>
+
+<p>
+<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n4126.htm">N4126</a>
+</p>
+</section>
+
+<section>
+<h2>
+比較演算子を書ける？
+</h2>
+
+<pre><code class="cpp">struct X
+{
+    int a ;
+    double b ;
+    std::string c ;
+} ;
+</code></pre>
+</section>
+
+<section>
+<h2>等価、不等価</h2>
+
+<pre><code class="cpp">struct X
+{
+
+    bool operator == ( const X &amp; rhs ) const noexcept
+    {
+        return
+            a == rhs.a &amp;&amp;
+            b == rhs.b &amp;&amp;
+            c == rhs.c ;
+    }
+
+    bool operator != ( const X &amp; rhs ) const noexcept
+    { return !( *this == rhs ) ; }
+} ;
+</code></pre>
+</section>
+
+<section>
+<h2>不等号</h2>
+
+<pre><code class="cpp">struct X
+{
+    bool operator &lt; ( const X &amp; rhs ) const noexcept
+    {
+        return std::tie( a, b, c ) &lt; std::tie( rhs.a, rhs.b, rhs.c ) ;
+    }
+
+    bool operator &gt; ( const X &amp; rhs ) const noexcept
+    { return rhs &lt; *this ; }
+
+    bool operator &lt;= ( const X &amp; rhs ) const noexcept
+    { return !( rhs &lt; *this ) ; }
+
+    bool operator &gt;= ( const X &amp; rhs ) const noexcept
+    { return !( *this &lt; rhs ) ; }
+
+} ;
+</code></pre>
+</section>
+
+<section>
+<h2>
+めんどくさい
+</h2>
+
+<h2>
+ややこしい
+</h2>
+
+<h2>
+間違えやすい
+</h2>
+</section>
+
+<section>
+<p>
+そもそも
+</p>
+
+<p>
+各データメンバーが比較できるのであれば
+</p>
+
+<p>
+機械的に生成できるではないか
+</p>
+</section>
+
+<section>
+<h2>デフォルトの比較演算子</h2>
+
+<p>
+比較演算子を自動生成
+</p>
+
+<p>
+明示的に宣言することでデフォルト生成
+</p>
+
+<p>
+互換性のために明示的に記述
+</p>
+
+<p>
+既存のコードの意味を変えてはならない
+</p>
+</section>
+
+<section>
+<h2>提案文法</h2>
+
+<pre><code class="cpp">struct X
+{
+    int a, b, c ;
+
+    bool operator == ( const X &amp; ) = default ;
+    bool operator != ( const X &amp; ) = default ;
+
+    bool operator &lt; ( const X &amp; ) = default ;
+    bool operator &gt; ( const X &amp; ) = default ;
+    bool operator &lt;= ( const X &amp; ) = default ;
+    bool operator &gt;= ( const X &amp; ) = default ;
+};
+</code></pre>
+</section>
+
+<section>
+<h2>まだ使いづらい</h2>
+</section>
+
+<section>
+<h2>省略された提案文法</h2>
+
+<pre><code class="cpp">struct X
+{
+    int a, b, c ;
+
+    default: ==, !=, &lt;, &gt;, &lt;=, &gt;= ;
+} ;
+</code></pre>
+</section>
+
+<section>
+<h2>まだまだ面倒</h2>
+</section>
+
+<section>
+<h2>暗黙のデフォルト生成</h2>
+
+<p>
+<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n4175.pdf">N4175</a>
+</p>
+
+<p>
+暗黙に生成することを提案
+</p>
+</section>
+
+<section>
+<h2>便利な条件演算子</h2>
+
+<p>
+<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n4120.pdf">N4120</a>
+</p>
+
+<p>
+"x ? x : y"を"x?:y"に
+</p>
+</section>
+
+<section>
+<h2>よくあるコード</h2>
+
+<p>
+xがtrueならばxを、falseならばyを返す
+</p>
+
+<pre><code class="cpp">x ? x : y ;
+</code></pre>
+</section>
+
+<section>
+<p>
+xが重複している
+</p>
+
+<p>
+間違えやすい
+</p>
+
+<p>
+式が二度評価されるため非効率的
+</p>
+
+<pre><code class="cpp">// 重い計算処理
+int calculate_value() ;
+int fallback_value = 100 ;
+calculate_value() ? calculate_value() ? fallback_value ;
+</code></pre>
+</section>
+
+<section>
+<h2>効率のいい書き方</h2>
+
+<p>
+面倒くさい
+</p>
+
+<p>
+機械的に変換できる
+</p>
+
+<p>
+コンパイラーにやらせればよい
+</p>
+
+<pre><code class="cpp">auto &amp;&amp; temp = calculate_value() ;
+temp ? temp : fallback_value ;
+</code></pre>
+</section>
+
+<section>
+<h2>提案文法</h2>
+
+<pre><code class="cpp">x ? y ;
+</code></pre>
+
+<p>
+以下と同等
+</p>
+
+<pre><code class="cpp">auto &amp;&amp; temp = x ;
+temp ? temp : y ;
+</code></pre>
+</section>
+
+<section>
+<h2>参照チェック条件</h2>
+
+<p>
+<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n4127.html">N4127</a>
+</p>
+</section>
+
+<section>
+<h2>よくあるコード</h2>
+
+<ul>
+<li>
+ポインターを変数に代入
+</li>
+
+<li>
+nullかどうかをチェックする
+</li>
+
+<li>
+nullでなければ処理を行う
+</li>
+</ul>
+
+<pre><code class="cpp">if ( std::shared_ptr&lt;T&gt; ptr = obj.lock() )
+{
+    do_something( *ptr ) ;
+}
+</code></pre>
+</section>
+
+<section>
+<h2>シンタックスシュガー</h2>
+
+<p>
+もっと短く書きたい
+</p>
+
+<pre><code class="cpp">if ( T &amp; x = obj.lock() )
+{
+    f( x ) ;
+}
+</code></pre>
+</section>
+
+<section>
+<h2>展開後</h2>
+
+<pre><code class="cpp">if ( auto &amp;&amp; __p = obj.lock() )
+{
+    T &amp; x = * __p ;
+    f( x ) ;
+}
+</code></pre>
+</section>
+
+<section>
+<h2>型まで省略したい</h2>
+
+<pre><code class="cpp">if ( x : e ) s ;
+</code></pre>
+
+<p>
+展開すると
+</p>
+
+<pre><code class="cpp">if ( auto &amp;&amp; __p = e )
+{
+    auto &amp;&amp; x = * __p ;
+    s ;
+}
+</code></pre>
+</section>
+
+<section>
+<h2>インライン変数</h2>
+
+<p>
+もしくは、インライン式？
+</p>
+
+<p>
+隠匿式とも
+</p>
+
+<p>
+<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n4147.pdf">N4147</a>
+</p>
+</section>
+
+<section>
+<h2>インライン変数</h2>
+
+<p>
+呼ばれるたびに初期化子が評価される変数
+</p>
+
+<pre><code class="cpp">int runtime_data(
+{
+    static int count ;
+    return ++count ;
+}
+
+inline int data = runtime_data() ;
+
+int main()
+{
+    data ; // 1
+    data ; // 2
+    data ; // 3
+}
+</code></pre>
+</section>
+
+<section>
+<h2>用途</h2>
+
+<p>
+ストレージが確保されないことを保証
+</p>
+
+<p>
+ODR回避
+</p>
+</section>
+
+<section>
+<h2>名前付き実引数</h2>
+
+<p>
+<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n4172.htm">N4172</a>
+</p>
+</section>
+
+<section>
+<h2>引数の多い関数はわかりにくい</h2>
+
+<pre><code class="cpp">void draw_rect( int left, int top, int width, int height )
+
+int main()
+{
+    // どれがどれだっけ？
+    draw_rect( 30, 30. 200, 300 ) ;
+}
+</code></pre>
+</section>
+
+<section>
+<h2>引数名を指定したい</h2>
+
+<pre><code class="cpp">int main()
+{
+    // わかりやすい
+    draw_rect( left : 30, top : 30, width : 200, height : 300 ) ;
+
+    // 順番も変えられる
+    draw_rect( top : 0, left : 0, width : 640, height : 480 ) ;
+}
+</code></pre>
+</section>
+
+<section>
+<h2>ドット演算子</h2>
+
+<p>
+<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n4173.pdf">N4173</a>
+</p>
+</section>
+
+<section>
+<h2>ドット演算子とは</h2>
+
+<p>
+operator . ()をユーザー定義したい
+</p>
+
+<pre><code class="cpp">class string_ref
+{
+    std::string value ;
+public :
+    std::string &amp; operator . () { return vlaue ; }
+} ;
+
+int main()
+{
+    string_ref ref ;
+
+    // std::stringのlength
+    ref.length() ;
+
+    // ref.operator .() = "hello"
+    ref = "hello" ;
+}
+</code></pre>
+</section>
+
+<section>
+<h2>使い道</h2>
+
+<p>
+スマートリファレンスを定義できる
+</p>
+
+<pre><code class="cpp">template &lt; typename T &gt;
+class Ref
+{
+    T * p ;
+public :
+    Ref( ) : p( new T() ) { }
+    ~Ref() { delete p ; }
+
+    T &amp; operator . () { return *p ; }
+} ;
+</code></pre>
+</section>
+
+<section>
+<h2>上書き</h2>
+
+<p>
+こういうクラスがある場合
+</p>
+
+<pre><code class="cpp">class string_ref
+{
+    std::string value ;
+public :
+    std::string &amp;&amp; operator .() { return value ; }
+    std::size_t size() ;
+} ;
+</code></pre>
+</section>
+
+<section>
+<h2>上書き</h2>
+
+<p>
+クラスにメンバーがある場合は優先される
+</p>
+
+<pre><code class="cpp">int main()
+{
+    string_ref ref ;
+
+    // string_refのsize
+    ref.size() ;
+
+    // std::stringのlength
+    ref.length() ;
+}
+</code></pre>
+</section>
+
+<section>
+<h2>UTF-8文字リテラル</h2>
+
+<p>
+<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n4197.html">N4197</a>
+</p>
+</section>
+
+<section>
+<h2>UTF-8文字リテラル</h2>
+
+<p>
+UTF-8コード単位ひとつで表現できる文字を記述できる
+</p>
+
+<pre><code class="cpp">// OK
+char c = u8'c' ;
+
+// エラー
+char あ = u8'あ' ;
+</code></pre>
+</section>
+
+<section>
+<h2>名前空間のネスト</h2>
+
+<p>
+<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n4230.html">N4230</a>
+</p>
+</section>
+
+<section>
+<h2>名前空間のネスト</h2>
+
+<p>
+深い名前空間のネストは面倒
+</p>
+
+<pre><code class="cpp">namespace A { namespace B { namespace C {
+} } } 
+</code></pre>
+</section>
+
+<section>
+<h2>名前空間のネスト</h2>
+
+<p>
+簡潔に書けるようになる
+</p>
+
+<pre><code class="cpp">namespace A::B::C {
+}
+</code></pre>
+</section>
+
+
+
+<section>
+<h2>統一関数呼び出し</h2>
+
+<p>
+<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n4165.pdf">N4165</a>
+</p>
+
+<p>
+<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n4174.pdf">N4174</a>
+</p>
+</section>
+
+<section>
+<h2>提案</h2>
+
+<pre><code class="cpp">    x.f( y, z )</code></pre>
+
+<p>
+を
+</p>
+
+<pre><code class="cpp">    f( x, y, z )</code></pre>
+
+<p>
+と同等にする
+</p>
+</section>
+
+<section>
+<h2>より汎用なコード</h2>
+
+<p>
+メンバー関数とフリー関数は呼び出しの文法が異なる
+</p>
+
+<p>
+汎用的なコードの妨げになる
+</p>
+
+<pre><code class="cpp">template &lt; typename T &gt;
+void f( T &amp; a, T &amp; b  )
+{
+    // Tはクラスの場合
+    a.swap( b ) ;
+
+    // Tがクラスではない場合
+    swap( a, b ) ;
+}
+</code></pre>
+</section>
+
+<section>
+<h2>最近の動向</h2>
+
+<p>
+コードの汎用性を上げるため
+</p>
+
+<p>
+メンバー関数を使わないようにしよう
+</p>
+
+<blockquote>
+<p>
+Fucntions Want to be free.
+</p>
+
+<p>
+関数は自由になりたがっている。
+</p>
+
+<p>
+-- Scott Meyers
+</p>
+</blockquote>
+</section>
+
+<section>
+<h2>解決案</h2>
+
+<p>
+関数呼び出しの文法を統一してしまえばよい
+</p>
+
+<p>
+x.f(y) を f( x, y ) と同等にすればよい
+</p>
+</section>
+
+<section>
+<h2>ツールサポート</h2>
+
+<p>
+コード補完が強力になる
+</p>
+
+<pre><code class="cpp">void f( std::FILE * fp )
+{
+    // コード補完可能
+    fp-&gt;fseek
+}
+</code></pre>
+</section>
+
+<section>
+<h2>現実</h2>
+
+<p>
+move, swap, addressofなど
+</p>
+
+<p>
+汎用的すぎる関数が大量にある
+</p>
+
+<p>
+それほど便利にはならない
+</p>
+
+<pre><code class="cpp">fp-&gt;for_each
+</code></pre>
+
+</section>
+
+<section>
+<h2>コンテナーに不完全型</h2>
+
+<p>
+<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n4056.html">N4056</a>
+</p>
+</section>
+
+<section>
+<h2>不完全型の要素</h2>
+
+<p>
+こう書けるようになる
+</p>
+
+<pre><code class="cpp">struct Node
+{
+    // 現状では未定義
+    std::vector&lt;Node&gt; node_list ;
+} ;
+</code></pre>
+</section>
+
+<section>
+<h2>理由</h2>
+
+<p>
+クラスは定義後に完全形になる
+</p>
+
+<pre><code class="cpp">class Node ; // 宣言
+
+Node n ; // エラー、不完全型
+Node * p ; // OK
+
+class Node { } ; // 定義
+Node n ; // OK
+</code></pre>
+</section>
+
+
+<section>
+<h2>実装可能性</h2>
+
+<p>
+コンテナーで不完全型に対応するのは可能
+</p>
+
+<p>
+規格で規定されていない
+</p>
+
+<p>
+実装ごとに対応はバラバラ
+</p>
+</section>
+
+<section>
+<h2>GCDとLCM</h2>
+
+<p>
+<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n4061.pdf">N4061</a>
+</p>
+</section>
+
+<section>
+<h2>GCDとLCM</h2>
+
+<p>
+GCD - Greatest Common Divisor
+</p>
+
+<p>
+最大公約数
+</p>
+
+<p>
+LCM - Least Common Multiple
+</p>
+
+<p>
+最小公倍数
+</p>
+</section>
+
+<section>
+<h2>標準ライブラリに提案</h2>
+
+<pre><code class="cpp">std::gcd( 10, 25 ) ; // 5
+std::lcm( 123, 456 ) ; // 18696
+</code></pre>
+</section>
+
+<section>
+<h2>現実的な提案</h2>
+
+<p>
+まだ採用されていないものの
+</p>
+
+<p>
+かなり確実に採用される
+</p>
+
+<p>
+すでにClang上流で実装済み
+</p>
+</section>
+
+<section>
+<h2>メッセージなしstatic_assert</h2>
+
+<p>
+<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n3928.pdf">N3928</a>
+</p>
+</section>
+
+<section>
+<h2>static_assertの文法</h2>
+
+<p>
+必ず文字列リテラルが必要
+</p>
+
+<pre><code class="cpp">
+static_assert( constant-expression , string-litera ) ; 
+</code></pre>
+
+</section>
+
+<section>
+<h2>文法違反の例</h2>
+
+<pre><code class="cpp">// エラー
+static_assert( expr ) ;
+
+// OK
+static_assert( expr, "" ) ;
+</code></pre>
+</section>
+
+<section>
+<h2>文字列リテラルの省略を許可</h2>
+
+<p>
+Clangで実装済み
+</p>
+</section>
+
+<section>
+<h2>省略Range-based for</h2>
+
+<p>
+<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n3994.htm">N3994</a>
+</p>
+</section>
+
+<section>
+<h2>Range-based forは便利</h2>
+
+<pre><code class="cpp">for ( T elem : range )
+    statememt ;
+</code></pre>
+</section>
+
+
+<section>
+<h2>型名を記述するのが面倒</h2>
+
+<pre><code class="cpp">template &lt; typename Container &gt;
+void f( Container &amp; c )
+{
+    for ( Container::value_type &amp; elem : c )
+    {
+        // ...
+    }
+}
+</code></pre>
+</section>
+
+<section>
+<h2>autoが使えるが</h2>
+
+<p>
+正しく使うのが面倒
+</p>
+
+<p>
+なぜこう書かねばならぬかは論文参照
+</p>
+
+<pre><code class="cpp">for ( auto &amp;&amp; elem : c )
+{
+    // ...
+}
+</code></pre>
+</section>
+
+<section>
+<h2>省略文法</h2>
+
+<p>
+auto &amp;&amp;と同じ意味になる
+</p>
+
+<p>
+Clangに実装済み
+</p>
+
+<pre><code class="cpp">for ( elem : range )
+{
+    // ...
+}
+</code></pre>
+</section>
+
+<section>
+
+<h2>テンプレート</h2>
+<h2>テンプレートパラメーター</h2>
+<h2>に</h2>
+<h2>typename</h2>
+
+<p>
+<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n4051.html">N4051</a>
+</p>
+</section>
+
+<section>
+<h2>文法上の制約</h2>
+
+<p>
+C++には不思議な文法上の制約がある
+</p>
+
+<pre><code class="cpp">template &lt;
+    template &lt; typename T &gt;
+    // classキーワードのみ使える
+    class U &gt;
+struct X ;
+</code></pre>
+</section>
+
+
+<section>
+<h2>typenameも許可</h2>
+
+<p>
+Clangで実装済み
+</p>
+
+<pre><code class="cpp">template &lt;
+    template &lt; typename T &gt;
+    // OK
+    typename U &gt;
+struct X ;
+</code></pre>
+
+</section>
+
+
+<section>
+<h2>ドワンゴ広告</h2>
+
+<p>
+このスライド資料はドワンゴ勤務中に書かれた
+</p>
+
+<p>
+ドワンゴは本物のC++プログラマーを募集しています
+</p>
+
+<p>
+<a href="http://info.dwango.co.jp/recruit/">http://info.dwango.co.jp/recruit/</a>
+</p>
+</section>
+
+
+
+
+
+
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'none', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
